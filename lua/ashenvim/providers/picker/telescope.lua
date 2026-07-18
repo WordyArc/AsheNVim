@@ -81,9 +81,10 @@ local function find_command()
   end
 end
 
----@param opts { keys: LazyKeysSpec[] }
+---@param opts? { keys?: LazyKeysSpec[] }
 ---@return LazyPluginSpec
 function M.spec(opts)
+  opts = opts or {}
   return {
     "nvim-telescope/telescope.nvim",
     cmd = "Telescope",
