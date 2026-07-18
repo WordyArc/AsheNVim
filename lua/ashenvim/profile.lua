@@ -4,6 +4,7 @@ local completion = require("ashenvim.providers.completion.blink")
 
 local specs = {
   require("ashenvim.plugins.colorscheme").spec(),
+  require("ashenvim.plugins.which_key").spec(),
   picker.spec({
     keys = require("ashenvim.features.picker").keys(picker),
   }),
