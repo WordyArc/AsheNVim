@@ -3,6 +3,7 @@ local explorer = require("ashenvim.providers.explorer.neo_tree")
 local completion = require("ashenvim.providers.completion.blink")
 
 local specs = {
+  require("ashenvim.plugins.colorscheme").spec(),
   picker.spec({
     keys = require("ashenvim.features.picker").keys(picker),
   }),

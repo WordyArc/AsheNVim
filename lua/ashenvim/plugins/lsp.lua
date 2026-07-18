@@ -66,7 +66,7 @@ function M.spec(providers)
 
         require("mason-lspconfig").setup({
           ensure_installed = vim.tbl_keys(servers),
-          automatic_enable = true,
+          automatic_enable = false,
         })
         vim.lsp.enable(vim.tbl_keys(servers))
       end,

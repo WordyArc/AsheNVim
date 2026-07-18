@@ -4,6 +4,28 @@ local M = {}
 function M.setup(picker)
   local group = vim.api.nvim_create_augroup("AshenVimLsp", { clear = true })
 
+  local function setup_document_highlight(buf)
+    local autocmds = vim.api.nvim_get_autocmds({
+      group = group,
+      event = "CursorHold",
+      buffer = buf,
+    })
+    if #autocmds > 0 then
+      return
+    end
+
+    vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+      group = group,
+      buffer = buf,
+      callback = vim.lsp.buf.document_highlight,
+    })
+    vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+      group = group,
+      buffer = buf,
+      callback = vim.lsp.buf.clear_references,
+    })
+  end
+
   vim.api.nvim_create_autocmd("LspAttach", {
     group = group,
     desc = "Configure LSP buffer mappings",
@@ -36,7 +58,6 @@ function M.setup(picker)
       map("textDocument/declaration", "n", "gD", vim.lsp.buf.declaration, "Goto declaration")
       map("textDocument/hover", "n", "K", vim.lsp.buf.hover, "Hover")
       map("textDocument/signatureHelp", "n", "gK", vim.lsp.buf.signature_help, "Signature help")
-      map("textDocument/signatureHelp", "i", "<C-k>", vim.lsp.buf.signature_help, "Signature help")
       map("textDocument/codeAction", { "n", "x" }, "<leader>ca", vim.lsp.buf.code_action, "Code action")
       map("textDocument/rename", "n", "<leader>cr", vim.lsp.buf.rename, "Rename")
       map("textDocument/documentSymbol", "n", "<leader>ss", function()
@@ -47,22 +68,13 @@ function M.setup(picker)
       end, "Workspace symbols")
       map(nil, "n", "<leader>cl", "<cmd>LspInfo<cr>", "LSP info")
 
-      if supports("textDocument/inlayHint") then
+      if supports("textDocument/inlayHint") and not vim.b[buf].ashenvim_inlay_hints_initialized then
+        vim.b[buf].ashenvim_inlay_hints_initialized = true
         vim.lsp.inlay_hint.enable(true, { bufnr = buf })
       end
 
-      if supports("textDocument/documentHighlight") and not vim.b[buf].ashenvim_lsp_highlight then
-        vim.b[buf].ashenvim_lsp_highlight = true
-        vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-          group = group,
-          buffer = buf,
-          callback = vim.lsp.buf.document_highlight,
-        })
-        vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
-          group = group,
-          buffer = buf,
-          callback = vim.lsp.buf.clear_references,
-        })
+      if supports("textDocument/documentHighlight") then
+        setup_document_highlight(buf)
       end
     end,
   })
@@ -74,6 +86,15 @@ function M.setup(picker)
       vim.lsp.util.buf_clear_references(event.buf)
     end,
   })
+
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    for _, client in ipairs(vim.lsp.get_clients({ bufnr = buf })) do
+      if client:supports_method("textDocument/documentHighlight", buf) then
+        setup_document_highlight(buf)
+        break
+      end
+    end
+  end
 end
 
 return M
