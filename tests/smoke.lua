@@ -7,6 +7,7 @@ assert(vim.fn.maparg("<Space>?", "n") ~= "", "which-key keymap is missing")
 assert(vim.fn.maparg("<Space>ff", "n") ~= "", "picker keymap is missing")
 assert(vim.fn.maparg("<Space>e", "n") ~= "", "explorer keymap is missing")
 assert(vim.fn.maparg("<Space>bd", "n") ~= "", "core keymap is missing")
+assert(vim.fn.maparg("<Space>cs", "n") ~= "", "outline keymap is missing")
 
 local function contains(values, expected)
   for _, value in ipairs(values) do
@@ -37,10 +38,14 @@ end
 
 local telescope_spec = find_spec(specs, "nvim-telescope/telescope.nvim")
 local explorer_spec = find_spec(specs, "nvim-neo-tree/neo-tree.nvim")
+local outline_spec = find_spec(specs, "hedyhli/outline.nvim")
 local completion_spec = find_spec(specs, "saghen/blink.cmp")
 local lsp_spec = find_spec(specs, "neovim/nvim-lspconfig")
 assert(telescope_spec.cmd == "Telescope" and #telescope_spec.keys > 0, "picker triggers are missing")
 assert(explorer_spec.cmd == "Neotree" and #explorer_spec.keys > 0, "explorer triggers are missing")
+assert(explorer_spec.opts.window.position == "right", "Neo-tree must open on the right")
+assert(contains(outline_spec.cmd, "Outline") and #outline_spec.keys > 0, "outline triggers are missing")
+assert(outline_spec.opts.outline_window.position == "left", "outline must open on the left")
 assert(contains(completion_spec.event, "InsertEnter"), "completion InsertEnter trigger is missing")
 assert(contains(completion_spec.event, "CmdlineEnter"), "completion CmdlineEnter trigger is missing")
 assert(contains(lsp_spec.event, "BufReadPre"), "LSP BufReadPre trigger is missing")
