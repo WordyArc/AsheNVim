@@ -15,9 +15,9 @@ function M.setup()
   require("ashenvim.config.autocmds").setup()
   require("ashenvim.config.keymaps").setup()
 
-  require("ashenvim.core.lazy").setup(require("ashenvim.profile"))
+  local specs = require("ashenvim.bootstrap").build()
+  require("ashenvim.core.lazy").setup(specs)
   did_setup = true
 end
 
 return M
-

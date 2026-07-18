@@ -42,6 +42,7 @@ function M.spec(providers)
       dependencies = {
         "mason-org/mason.nvim",
         "mason-org/mason-lspconfig.nvim",
+        -- Completion capabilities are configured during LSP setup, so this loads with LSP.
         providers.completion.plugin,
       },
       config = function()

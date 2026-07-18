@@ -4,7 +4,7 @@ local M = {}
 ---@field open fun(opts?: { cwd?: string, source?: "filesystem"|"buffers"|"git_status" })
 
 local function cwd()
-  return vim.uv.cwd() or vim.fn.getcwd()
+  return require("ashenvim.core.root").cwd()
 end
 
 local function root()

@@ -15,6 +15,12 @@ local function contains(root, path)
   return path == root or vim.startswith(path, root .. "/")
 end
 
+---Return Neovim's effective current directory, including local directory scopes.
+---@return string
+function M.cwd()
+  return vim.fs.normalize(vim.fn.getcwd())
+end
+
 ---@param buf? integer
 ---@return string
 function M.get(buf)
@@ -52,7 +58,7 @@ function M.get(buf)
     end
   end
 
-  return vim.uv.cwd() or vim.fn.getcwd()
+  return M.cwd()
 end
 
 return M

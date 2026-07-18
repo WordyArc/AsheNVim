@@ -86,15 +86,6 @@ function M.setup(picker)
       vim.lsp.util.buf_clear_references(event.buf)
     end,
   })
-
-  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    for _, client in ipairs(vim.lsp.get_clients({ bufnr = buf })) do
-      if client:supports_method("textDocument/documentHighlight", buf) then
-        setup_document_highlight(buf)
-        break
-      end
-    end
-  end
 end
 
 return M

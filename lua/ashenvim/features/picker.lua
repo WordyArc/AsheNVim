@@ -48,7 +48,7 @@ local M = {}
 ---@field open fun(action: AshenPickerAction, opts?: AshenPickerOptions)
 
 local function cwd()
-  return vim.uv.cwd() or vim.fn.getcwd()
+  return require("ashenvim.core.root").cwd()
 end
 
 local function root()
