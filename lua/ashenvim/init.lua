@@ -8,7 +8,7 @@ function M.setup()
   end
 
   if vim.fn.has("nvim-0.12") == 0 then
-    error("AshenVim requires Neovim >= 0.12")
+    error("AsheNVim requires Neovim >= 0.12")
   end
 
   require("ashenvim.config.options").setup()

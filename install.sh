@@ -7,14 +7,14 @@ usage() {
 Usage: ./install.sh [TARGET]
 
 Remove the existing Neovim config and runtime data, then install a fresh copy
-of AshenVim.
+of AsheNVim.
 
 TARGET defaults to $XDG_CONFIG_HOME/nvim or ~/.config/nvim.
 
 Examples:
   ./install.sh
-  ./install.sh ~/.config/AshenVim
-  NVIM_APPNAME=AshenVim nvim
+  ./install.sh ~/.config/AsheNVim
+  NVIM_APPNAME=AsheNVim nvim
 EOF
 }
 
@@ -54,7 +54,7 @@ data_dir=${XDG_DATA_HOME:-"$HOME/.local/share"}/$app_name
 state_dir=${XDG_STATE_HOME:-"$HOME/.local/state"}/$app_name
 cache_dir=${XDG_CACHE_HOME:-"$HOME/.cache"}/$app_name
 
-printf 'Removing existing AshenVim installation:\n'
+printf 'Removing existing AsheNVim installation:\n'
 printf '  %s\n' "$target" "$data_dir" "$state_dir" "$cache_dir"
 rm -rf "$target" "$data_dir" "$state_dir" "$cache_dir"
 
@@ -62,4 +62,4 @@ mkdir -p "$target"
 cp "$source_dir/init.lua" "$source_dir/lazy-lock.json" "$source_dir/stylua.toml" "$target/"
 cp -R "$source_dir/lua" "$target/lua"
 
-printf 'Installed AshenVim to %s\n' "$target"
+printf 'Installed AsheNVim to %s\n' "$target"

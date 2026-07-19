@@ -83,7 +83,7 @@ function M.spec()
         end)
       end
 
-      local group = vim.api.nvim_create_augroup("AshenVimTreesitter", { clear = true })
+      local group = vim.api.nvim_create_augroup("AsheNVimTreesitter", { clear = true })
       vim.api.nvim_create_autocmd({ "FileType", "BufWinEnter" }, {
         group = group,
         callback = function(event)

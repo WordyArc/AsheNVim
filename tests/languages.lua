@@ -37,7 +37,7 @@ write(rust_root .. "/Cargo.toml", {
   'version = "0.1.0"',
   'edition = "2024"',
 })
-write(rust_file, { 'fn   main(){println!("AshenVim");}' })
+write(rust_file, { 'fn   main(){println!("AsheNVim");}' })
 
 local rust_buf = open(rust_file)
 local rust_client = wait_for_client("rust_analyzer", rust_buf)
@@ -68,7 +68,7 @@ write(kotlin_root .. "/build.gradle.kts", {
   "}",
   "kotlin { jvm() }",
 })
-write(kotlin_file, { "fun main() {", '  println("AshenVim")', "}" })
+write(kotlin_file, { "fun main() {", '  println("AsheNVim")', "}" })
 
 local kotlin_buf = open(kotlin_file)
 local kotlin_client = wait_for_client("kotlin_lsp", kotlin_buf)
@@ -99,4 +99,4 @@ vim.api.nvim_buf_delete(rust_buf, { force = true })
 vim.api.nvim_buf_delete(kotlin_buf, { force = true })
 vim.fn.delete(fixture, "rf")
 
-print("AshenVim language integration test: ok")
+print("AsheNVim language integration test: ok")

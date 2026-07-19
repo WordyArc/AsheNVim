@@ -25,7 +25,7 @@ function M.spec(opts)
     },
     init = function()
       vim.api.nvim_create_autocmd("BufEnter", {
-        group = vim.api.nvim_create_augroup("AshenVimNeoTreeDirectory", { clear = true }),
+        group = vim.api.nvim_create_augroup("AsheNVimNeoTreeDirectory", { clear = true }),
         callback = function(event)
           if package.loaded["neo-tree"] then
             return true

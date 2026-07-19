@@ -2,7 +2,7 @@ local M = {}
 
 ---@param picker AshenPickerProvider
 function M.setup(picker)
-  local group = vim.api.nvim_create_augroup("AshenVimLsp", { clear = true })
+  local group = vim.api.nvim_create_augroup("AsheNVimLsp", { clear = true })
 
   local function setup_document_highlight(buf)
     local autocmds = vim.api.nvim_get_autocmds({

@@ -1,7 +1,7 @@
 local M = {}
 
 function M.setup()
-  local group = vim.api.nvim_create_augroup("AshenVim", { clear = true })
+  local group = vim.api.nvim_create_augroup("AsheNVim", { clear = true })
 
   vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
     group = group,

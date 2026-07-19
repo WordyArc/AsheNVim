@@ -1,6 +1,6 @@
 assert(vim.g.mapleader == " ", "mapleader was not configured")
 assert(vim.g.maplocalleader == "\\", "maplocalleader was not configured")
-assert(_G.AshenVim == nil, "AshenVim must not create a global facade")
+assert(_G.AsheNVim == nil, "AsheNVim must not create a global facade")
 assert(vim.fn.exists(":Lazy") == 2, "lazy.nvim was not initialized")
 assert(vim.g.colors_name == "cyberdream", "cyberdream colorscheme was not applied")
 assert(vim.fn.maparg("<Space>?", "n") ~= "", "which-key keymap is missing")
@@ -299,4 +299,4 @@ assert(picker_calls[#picker_calls].action == "definitions", "LSP mapping did not
 assert(vim.lsp.get_client_by_id(client_id)):stop(true)
 vim.api.nvim_buf_delete(test_buf, { force = true })
 
-print("AshenVim smoke test: ok")
+print("AsheNVim smoke test: ok")
