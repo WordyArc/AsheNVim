@@ -25,6 +25,8 @@ function M.spec()
       { "<leader>fT", terminal_cwd, desc = "Terminal (cwd)" },
       { "<leader>ft", terminal_root, desc = "Terminal (root dir)" },
       { "<C-/>", focus_terminal_root, mode = { "n", "t" }, desc = "Terminal (root dir)" },
+      -- tmux compatibility: legacy terminals encode Ctrl+/ as Ctrl+_
+      { "<C-_>", focus_terminal_root, mode = { "n", "t" }, desc = "which_key_ignore" },
     },
   }
 end
