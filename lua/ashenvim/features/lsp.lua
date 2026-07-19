@@ -66,7 +66,7 @@ function M.setup(picker)
       map("workspace/symbol", "n", "<leader>sS", function()
         picker.open("workspace_symbols")
       end, "Workspace symbols")
-      map(nil, "n", "<leader>cl", "<cmd>LspInfo<cr>", "LSP info")
+      map(nil, "n", "<leader>cl", "<cmd>checkhealth vim.lsp<cr>", "LSP info")
 
       if supports("textDocument/inlayHint") and not vim.b[buf].ashenvim_inlay_hints_initialized then
         vim.b[buf].ashenvim_inlay_hints_initialized = true

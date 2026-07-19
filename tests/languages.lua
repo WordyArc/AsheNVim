@@ -43,6 +43,10 @@ local rust_buf = open(rust_file)
 local rust_client = wait_for_client("rust_analyzer", rust_buf)
 assert(rust_client:supports_method("textDocument/hover", rust_buf), "rust-analyzer hover support is missing")
 assert(rust_client:supports_method("textDocument/completion", rust_buf), "rust-analyzer completion support is missing")
+local lsp_info_mapping = vim.iter(vim.api.nvim_buf_get_keymap(rust_buf, "n")):find(function(mapping)
+  return mapping.desc == "LSP info"
+end)
+assert(lsp_info_mapping and lsp_info_mapping.rhs:find("checkhealth vim.lsp", 1, true), "LSP info mapping is invalid")
 assert_parser(rust_buf, "rust")
 
 vim.cmd("Lazy load conform.nvim")
