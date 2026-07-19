@@ -12,6 +12,10 @@ assert(vim.fn.maparg("<Space>ft", "n") ~= "", "root terminal keymap is missing")
 assert(vim.fn.maparg("<Space>fT", "n") ~= "", "cwd terminal keymap is missing")
 assert(vim.fn.maparg("<C-/>", "n") ~= "", "terminal keymap is missing")
 assert(vim.fn.maparg("<C-/>", "t") ~= "", "terminal-mode terminal keymap is missing")
+if vim.fn.executable("lazygit") == 1 then
+  assert(vim.fn.maparg("<Space>gg", "n") ~= "", "root lazygit keymap is missing")
+  assert(vim.fn.maparg("<Space>gG", "n") ~= "", "cwd lazygit keymap is missing")
+end
 
 local function contains(values, expected)
   for _, value in ipairs(values) do
@@ -53,7 +57,16 @@ local fff_spec = find_spec(specs, "dmtrKovalenko/fff.nvim")
 local telescope_spec = find_spec(specs, "nvim-telescope/telescope.nvim")
 local explorer_spec = find_spec(specs, "nvim-neo-tree/neo-tree.nvim")
 local outline_spec = find_spec(specs, "hedyhli/outline.nvim")
-local terminal_spec = find_spec(specs, "folke/snacks.nvim")
+local lazygit_spec
+local terminal_spec
+for _, spec in ipairs(specs) do
+  if spec[1] == "folke/snacks.nvim" and spec.opts.lazygit then
+    lazygit_spec = spec
+  elseif spec[1] == "folke/snacks.nvim" and spec.opts.terminal then
+    terminal_spec = spec
+  end
+end
+assert(lazygit_spec and terminal_spec, "Snacks feature specs are missing")
 local completion_spec = find_spec(specs, "saghen/blink.cmp")
 local lsp_spec = find_spec(specs, "neovim/nvim-lspconfig")
 assert(fff_spec.lazy == false and #fff_spec.keys > 0, "FFF picker setup is missing")
@@ -63,7 +76,8 @@ assert(explorer_spec.cmd == "Neotree" and #explorer_spec.keys > 0, "explorer tri
 assert(explorer_spec.opts.window.position == "right", "Neo-tree must open on the right")
 assert(contains(outline_spec.cmd, "Outline") and #outline_spec.keys > 0, "outline triggers are missing")
 assert(outline_spec.opts.outline_window.position == "left", "outline must open on the left")
-assert(type(terminal_spec.opts.terminal) == "table" and #terminal_spec.keys == 3, "terminal setup is missing")
+assert(type(terminal_spec.opts.terminal) == "table", "terminal setup is missing")
+assert(type(lazygit_spec.opts.lazygit) == "table", "lazygit setup is missing")
 local terminal_ctrl = find_key(terminal_spec, "<C-/>")
 assert(contains(terminal_ctrl.mode, "n") and contains(terminal_ctrl.mode, "t"), "terminal modes are incomplete")
 assert(contains(completion_spec.event, "InsertEnter"), "completion InsertEnter trigger is missing")
@@ -73,6 +87,7 @@ assert(contains(lsp_spec.event, "BufNewFile"), "LSP BufNewFile trigger is missin
 assert(contains(lsp_spec.dependencies, "saghen/blink.cmp"), "completion must be an explicit LSP dependency")
 
 local original_snacks = package.loaded.snacks
+local lazygit_calls = {}
 local terminal_calls = {}
 local terminal = setmetatable({
   focus = function(_, opts)
@@ -83,7 +98,12 @@ local terminal = setmetatable({
     terminal_calls[#terminal_calls + 1] = { action = "toggle", opts = opts }
   end,
 })
-package.loaded.snacks = { terminal = terminal }
+package.loaded.snacks = {
+  lazygit = function(opts)
+    lazygit_calls[#lazygit_calls + 1] = opts or false
+  end,
+  terminal = terminal,
+}
 find_key(terminal_spec, "<leader>fT")[2]()
 find_key(terminal_spec, "<leader>ft")[2]()
 terminal_ctrl[2]()
@@ -91,6 +111,13 @@ local expected_root = require("ashenvim.core.root").get()
 assert(terminal_calls[1].opts == nil, "cwd terminal must use the effective cwd")
 assert(terminal_calls[2].opts.cwd == expected_root, "root terminal did not use the project root")
 assert(terminal_calls[3].action == "focus" and terminal_calls[3].opts.cwd == expected_root, "terminal focus is invalid")
+if vim.fn.executable("lazygit") == 1 then
+  find_key(lazygit_spec, "<leader>gg")[2]()
+  find_key(lazygit_spec, "<leader>gG")[2]()
+  local expected_git_root = vim.fs.root(require("ashenvim.core.root").cwd(), ".git") or expected_root
+  assert(lazygit_calls[1].cwd == expected_git_root, "root lazygit did not use the Git root")
+  assert(lazygit_calls[2] == false, "cwd lazygit must use the effective cwd")
+end
 package.loaded.snacks = original_snacks
 
 local picker_calls = {}
