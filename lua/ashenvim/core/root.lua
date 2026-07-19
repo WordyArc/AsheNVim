@@ -7,6 +7,10 @@ local markers = {
   "pyproject.toml",
   "go.mod",
   "Cargo.toml",
+  "settings.gradle",
+  "settings.gradle.kts",
+  "build.gradle",
+  "build.gradle.kts",
 }
 
 local function contains(root, path)

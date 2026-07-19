@@ -8,6 +8,7 @@ local M = {}
 ---@return LazySpec
 function M.spec(providers)
   local servers = {
+    kotlin_lsp = {},
     lua_ls = {
       settings = {
         Lua = {
@@ -24,6 +25,7 @@ function M.spec(providers)
         },
       },
     },
+    rust_analyzer = {},
   }
 
   return {

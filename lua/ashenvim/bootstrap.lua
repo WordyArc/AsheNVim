@@ -10,9 +10,12 @@ function M.build()
   local specs = {
     require("ashenvim.plugins.colorscheme").spec(),
     require("ashenvim.plugins.dashboard").spec(),
+    require("ashenvim.plugins.formatting").spec(),
     require("ashenvim.plugins.lazygit").spec(),
     require("ashenvim.plugins.outline").spec(),
     require("ashenvim.plugins.terminal").spec(),
+    require("ashenvim.plugins.tooling").spec(),
+    require("ashenvim.plugins.treesitter").spec(),
     require("ashenvim.plugins.which_key").spec(),
     require("ashenvim.providers.picker.fff").spec({
       keys = require("ashenvim.features.picker").keys(picker),

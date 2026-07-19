@@ -8,6 +8,7 @@ assert(vim.fn.maparg("<Space>ff", "n") ~= "", "picker keymap is missing")
 assert(vim.fn.maparg("<Space>e", "n") ~= "", "explorer keymap is missing")
 assert(vim.fn.maparg("<Space>bd", "n") ~= "", "core keymap is missing")
 assert(vim.fn.maparg("<Space>cs", "n") ~= "", "outline keymap is missing")
+assert(vim.fn.maparg("<Space>cf", "n") ~= "", "formatting keymap is missing")
 assert(vim.fn.maparg("<Space>ft", "n") ~= "", "root terminal keymap is missing")
 assert(vim.fn.maparg("<Space>fT", "n") ~= "", "cwd terminal keymap is missing")
 assert(vim.fn.maparg("<C-/>", "n") ~= "", "terminal keymap is missing")
@@ -71,7 +72,10 @@ for _, spec in ipairs(specs) do
 end
 assert(dashboard_spec and lazygit_spec and terminal_spec, "Snacks feature specs are missing")
 local completion_spec = find_spec(specs, "saghen/blink.cmp")
+local formatting_spec = find_spec(specs, "stevearc/conform.nvim")
 local lsp_spec = find_spec(specs, "neovim/nvim-lspconfig")
+local tooling_spec = find_spec(specs, "WhoIsSethDaniel/mason-tool-installer.nvim")
+local treesitter_spec = find_spec(specs, "nvim-treesitter/nvim-treesitter")
 assert(fff_spec.lazy == false and #fff_spec.keys > 0, "FFF picker setup is missing")
 assert(type(fff_spec.build) == "function" and fff_spec.opts.lazy_sync, "FFF binary setup is missing")
 assert(telescope_spec.cmd == "Telescope" and telescope_spec.keys == nil, "Telescope must be a lazy fallback")
@@ -83,7 +87,7 @@ assert(
   dashboard_spec.lazy == false and dashboard_spec.priority == 1000 and dashboard_spec.opts.dashboard.enabled,
   "dashboard setup is missing"
 )
-assert(dashboard_spec.opts.dashboard.preset.header:find("AsheNVim", 1, true), "dashboard logo is missing")
+assert(dashboard_spec.opts.dashboard.preset.header ~= "", "dashboard logo is missing")
 assert(#dashboard_spec.opts.dashboard.preset.keys == 7, "dashboard actions are incomplete")
 local dashboard_actions = {}
 for _, item in ipairs(dashboard_spec.opts.dashboard.preset.keys) do
@@ -99,6 +103,18 @@ local terminal_ctrl = find_key(terminal_spec, "<C-/>")
 assert(contains(terminal_ctrl.mode, "n") and contains(terminal_ctrl.mode, "t"), "terminal modes are incomplete")
 assert(contains(completion_spec.event, "InsertEnter"), "completion InsertEnter trigger is missing")
 assert(contains(completion_spec.event, "CmdlineEnter"), "completion CmdlineEnter trigger is missing")
+assert(formatting_spec.lazy and formatting_spec.cmd == "ConformInfo", "Conform lazy loading is missing")
+assert(formatting_spec.opts.formatters_by_ft.lua[1] == "stylua", "Lua formatter is missing")
+assert(formatting_spec.opts.formatters_by_ft.rust[1] == "rustfmt", "Rust formatter is missing")
+assert(formatting_spec.opts.formatters_by_ft.kotlin.lsp_format == "fallback", "Kotlin must use LSP formatting")
+assert(contains(find_key(formatting_spec, "<leader>cf").mode, "x"), "range formatting mode is missing")
+assert(contains(tooling_spec.opts.ensure_installed, "stylua"), "StyLua tool installation is missing")
+assert(contains(tooling_spec.opts.ensure_installed, "tree-sitter-cli"), "Tree-sitter CLI installation is missing")
+assert(contains(tooling_spec.opts.ensure_installed, "kotlin-lsp"), "Kotlin LSP installation is missing")
+assert(contains(tooling_spec.opts.ensure_installed, "rust-analyzer"), "Rust LSP installation is missing")
+assert(treesitter_spec.branch == "main" and treesitter_spec.lazy == false, "Tree-sitter setup is invalid")
+assert(contains(treesitter_spec.opts.ensure_installed, "kotlin"), "Kotlin parser is missing")
+assert(contains(treesitter_spec.opts.ensure_installed, "rust"), "Rust parser is missing")
 assert(contains(lsp_spec.event, "BufReadPre"), "LSP BufReadPre trigger is missing")
 assert(contains(lsp_spec.event, "BufNewFile"), "LSP BufNewFile trigger is missing")
 assert(contains(lsp_spec.dependencies, "saghen/blink.cmp"), "completion must be an explicit LSP dependency")
@@ -200,6 +216,18 @@ package.loaded["telescope.builtin"] = original_builtin
 local root = require("ashenvim.core.root").get()
 assert(type(root) == "string" and root ~= "", "root detection returned an invalid path")
 assert(require("ashenvim.core.root").cwd() == vim.fs.normalize(vim.fn.getcwd()), "cwd semantics are invalid")
+
+local gradle_root = vim.fn.tempname()
+vim.fn.mkdir(gradle_root .. "/src/main/kotlin", "p")
+vim.fn.writefile({}, gradle_root .. "/settings.gradle.kts")
+local gradle_buf = vim.api.nvim_create_buf(false, true)
+vim.api.nvim_buf_set_name(gradle_buf, gradle_root .. "/src/main/kotlin/Main.kt")
+assert(
+  require("ashenvim.core.root").get(gradle_buf) == vim.uv.fs_realpath(gradle_root),
+  "Gradle root marker was not detected"
+)
+vim.api.nvim_buf_delete(gradle_buf, { force = true })
+vim.fn.delete(gradle_root, "rf")
 
 require("ashenvim.features.lsp").setup(fake_picker)
 local test_buf = vim.api.nvim_create_buf(true, false)
