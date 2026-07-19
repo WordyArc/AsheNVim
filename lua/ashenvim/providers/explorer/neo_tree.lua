@@ -58,6 +58,7 @@ function M.spec(opts)
       },
       window = {
         position = "right",
+        auto_expand_width = true,
         mappings = {
           ["<space>"] = "none",
           h = "close_node",
