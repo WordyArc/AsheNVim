@@ -9,6 +9,7 @@ function M.build()
 
   local specs = {
     require("ashenvim.plugins.colorscheme").spec(),
+    require("ashenvim.plugins.dashboard").spec(),
     require("ashenvim.plugins.lazygit").spec(),
     require("ashenvim.plugins.outline").spec(),
     require("ashenvim.plugins.terminal").spec(),

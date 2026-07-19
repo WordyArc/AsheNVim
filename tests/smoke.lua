@@ -57,16 +57,19 @@ local fff_spec = find_spec(specs, "dmtrKovalenko/fff.nvim")
 local telescope_spec = find_spec(specs, "nvim-telescope/telescope.nvim")
 local explorer_spec = find_spec(specs, "nvim-neo-tree/neo-tree.nvim")
 local outline_spec = find_spec(specs, "hedyhli/outline.nvim")
+local dashboard_spec
 local lazygit_spec
 local terminal_spec
 for _, spec in ipairs(specs) do
-  if spec[1] == "folke/snacks.nvim" and spec.opts.lazygit then
+  if spec[1] == "folke/snacks.nvim" and spec.opts.dashboard then
+    dashboard_spec = spec
+  elseif spec[1] == "folke/snacks.nvim" and spec.opts.lazygit then
     lazygit_spec = spec
   elseif spec[1] == "folke/snacks.nvim" and spec.opts.terminal then
     terminal_spec = spec
   end
 end
-assert(lazygit_spec and terminal_spec, "Snacks feature specs are missing")
+assert(dashboard_spec and lazygit_spec and terminal_spec, "Snacks feature specs are missing")
 local completion_spec = find_spec(specs, "saghen/blink.cmp")
 local lsp_spec = find_spec(specs, "neovim/nvim-lspconfig")
 assert(fff_spec.lazy == false and #fff_spec.keys > 0, "FFF picker setup is missing")
@@ -76,6 +79,20 @@ assert(explorer_spec.cmd == "Neotree" and #explorer_spec.keys > 0, "explorer tri
 assert(explorer_spec.opts.window.position == "right", "Neo-tree must open on the right")
 assert(contains(outline_spec.cmd, "Outline") and #outline_spec.keys > 0, "outline triggers are missing")
 assert(outline_spec.opts.outline_window.position == "left", "outline must open on the left")
+assert(
+  dashboard_spec.lazy == false and dashboard_spec.priority == 1000 and dashboard_spec.opts.dashboard.enabled,
+  "dashboard setup is missing"
+)
+assert(dashboard_spec.opts.dashboard.preset.header:find("AsheNVim", 1, true), "dashboard logo is missing")
+assert(#dashboard_spec.opts.dashboard.preset.keys == 7, "dashboard actions are incomplete")
+local dashboard_actions = {}
+for _, item in ipairs(dashboard_spec.opts.dashboard.preset.keys) do
+  dashboard_actions[item.key] = item.action
+end
+assert(dashboard_actions.f == "<leader>ff", "dashboard file search must use the configured picker")
+assert(dashboard_actions.g == "<leader>sg", "dashboard text search must use the configured picker")
+assert(dashboard_actions.r == "<leader>fr", "dashboard recent files must use the configured picker")
+assert(dashboard_actions.c == "<leader>fc", "dashboard config search must use the configured picker")
 assert(type(terminal_spec.opts.terminal) == "table", "terminal setup is missing")
 assert(type(lazygit_spec.opts.lazygit) == "table", "lazygit setup is missing")
 local terminal_ctrl = find_key(terminal_spec, "<C-/>")
