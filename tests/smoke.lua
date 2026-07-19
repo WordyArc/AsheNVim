@@ -81,6 +81,7 @@ assert(type(fff_spec.build) == "function" and fff_spec.opts.lazy_sync, "FFF bina
 assert(telescope_spec.cmd == "Telescope" and telescope_spec.keys == nil, "Telescope must be a lazy fallback")
 assert(explorer_spec.cmd == "Neotree" and #explorer_spec.keys > 0, "explorer triggers are missing")
 assert(explorer_spec.opts.window.position == "right", "Neo-tree must open on the right")
+assert(explorer_spec.opts.filesystem.filtered_items.visible, "Neo-tree hidden files must be visible")
 assert(contains(outline_spec.cmd, "Outline") and #outline_spec.keys > 0, "outline triggers are missing")
 assert(outline_spec.opts.outline_window.position == "left", "outline must open on the left")
 assert(

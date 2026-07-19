@@ -51,6 +51,7 @@ function M.spec(opts)
       open_files_do_not_replace_types = { "terminal", "qf" },
       filesystem = {
         bind_to_cwd = false,
+        filtered_items = { visible = true },
         follow_current_file = { enabled = true },
         hijack_netrw_behavior = "open_default",
         use_libuv_file_watcher = true,
