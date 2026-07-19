@@ -17,10 +17,14 @@ local function has_query(lang, query)
   return #vim.api.nvim_get_runtime_file(("queries/%s/%s.scm"):format(lang, query), false) > 0
 end
 
+---@return string? lang the language that could not be started, if any
 local function enable(buf)
   local lang = vim.treesitter.language.get_lang(vim.bo[buf].filetype)
-  if not lang or not pcall(vim.treesitter.start, buf, lang) then
+  if not lang then
     return
+  end
+  if not pcall(vim.treesitter.start, buf, lang) then
+    return lang
   end
 
   if has_query(lang, "indents") then
@@ -63,7 +67,7 @@ function M.spec()
           return
         end
 
-        local installed = treesitter.get_installed()
+        local installed = treesitter.get_installed("parsers")
         local missing = vim.tbl_filter(function(parser)
           return not vim.tbl_contains(installed, parser)
         end, opts.ensure_installed)
@@ -73,7 +77,7 @@ function M.spec()
         end
 
         installing = true
-        treesitter.install(missing):await(function()
+        treesitter.install(missing, { force = true }):await(function()
           installing = false
           vim.schedule(enable_loaded)
         end)
@@ -83,13 +87,11 @@ function M.spec()
       vim.api.nvim_create_autocmd({ "FileType", "BufWinEnter" }, {
         group = group,
         callback = function(event)
-          enable(event.buf)
+          local missing = enable(event.buf)
+          if missing and vim.tbl_contains(opts.ensure_installed, missing) then
+            install_missing()
+          end
         end,
-      })
-      vim.api.nvim_create_autocmd("User", {
-        group = group,
-        pattern = "MasonToolsUpdateCompleted",
-        callback = install_missing,
       })
 
       install_missing()

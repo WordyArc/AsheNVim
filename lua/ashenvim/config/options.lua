@@ -34,7 +34,6 @@ function M.setup()
   opt.pumheight = 10
   opt.relativenumber = true
   opt.scrolloff = 4
-  opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp", "folds" }
   opt.shiftround = true
   opt.shiftwidth = 2
   opt.shortmess:append({ I = true, W = true, c = true })

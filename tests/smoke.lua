@@ -13,10 +13,8 @@ assert(vim.fn.maparg("<Space>ft", "n") ~= "", "root terminal keymap is missing")
 assert(vim.fn.maparg("<Space>fT", "n") ~= "", "cwd terminal keymap is missing")
 assert(vim.fn.maparg("<C-/>", "n") ~= "", "terminal keymap is missing")
 assert(vim.fn.maparg("<C-/>", "t") ~= "", "terminal-mode terminal keymap is missing")
-if vim.fn.executable("lazygit") == 1 then
-  assert(vim.fn.maparg("<Space>gg", "n") ~= "", "root lazygit keymap is missing")
-  assert(vim.fn.maparg("<Space>gG", "n") ~= "", "cwd lazygit keymap is missing")
-end
+assert(vim.fn.maparg("<Space>gg", "n") ~= "", "root lazygit keymap is missing")
+assert(vim.fn.maparg("<Space>gG", "n") ~= "", "cwd lazygit keymap is missing")
 
 local function contains(values, expected)
   for _, value in ipairs(values) do
@@ -71,6 +69,7 @@ for _, spec in ipairs(specs) do
   end
 end
 assert(dashboard_spec and lazygit_spec and terminal_spec, "Snacks feature specs are missing")
+local gitsigns_spec = find_spec(specs, "lewis6991/gitsigns.nvim")
 local completion_spec = find_spec(specs, "saghen/blink.cmp")
 local formatting_spec = find_spec(specs, "stevearc/conform.nvim")
 local lsp_spec = find_spec(specs, "neovim/nvim-lspconfig")
@@ -102,6 +101,10 @@ assert(type(terminal_spec.opts.terminal) == "table", "terminal setup is missing"
 assert(type(lazygit_spec.opts.lazygit) == "table", "lazygit setup is missing")
 local terminal_ctrl = find_key(terminal_spec, "<C-/>")
 assert(contains(terminal_ctrl.mode, "n") and contains(terminal_ctrl.mode, "t"), "terminal modes are incomplete")
+assert(contains(gitsigns_spec.event, "BufReadPre"), "gitsigns BufReadPre trigger is missing")
+assert(contains(gitsigns_spec.event, "BufNewFile"), "gitsigns BufNewFile trigger is missing")
+assert(type(gitsigns_spec.opts.on_attach) == "function", "gitsigns buffer mappings are missing")
+assert(type(find_key(gitsigns_spec, "<leader>uG")[2]) == "function", "gitsigns toggle keymap is missing")
 assert(contains(completion_spec.event, "InsertEnter"), "completion InsertEnter trigger is missing")
 assert(contains(completion_spec.event, "CmdlineEnter"), "completion CmdlineEnter trigger is missing")
 assert(formatting_spec.lazy and formatting_spec.cmd == "ConformInfo", "Conform lazy loading is missing")

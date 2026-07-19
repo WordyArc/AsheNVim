@@ -47,13 +47,7 @@ local M = {}
 ---@class AshenPickerProvider
 ---@field open fun(action: AshenPickerAction, opts?: AshenPickerOptions)
 
-local function cwd()
-  return require("ashenvim.core.root").cwd()
-end
-
-local function root()
-  return require("ashenvim.core.root").get()
-end
+local root = require("ashenvim.core.root")
 
 ---@param picker AshenPickerProvider
 ---@param action AshenPickerAction
@@ -71,13 +65,13 @@ function M.keys(picker)
   return {
     { "<leader>,", open(picker, "buffers", { sort = "mru" }), desc = "Switch buffer" },
     { "<leader>/", open(picker, "grep", function()
-      return { cwd = root() }
+      return { cwd = root.get() }
     end), desc = "Grep (root)" },
     { "<leader>:", open(picker, "command_history"), desc = "Command history" },
     {
       "<leader><space>",
       open(picker, "files", function()
-        return { cwd = root() }
+        return { cwd = root.get() }
       end),
       desc = "Find files (root)",
     },
@@ -94,19 +88,23 @@ function M.keys(picker)
     {
       "<leader>ff",
       open(picker, "files", function()
-        return { cwd = root() }
+        return { cwd = root.get() }
       end),
       desc = "Find files (root)",
     },
-    { "<leader>fF", open(picker, "files", function()
-      return { cwd = cwd() }
-    end), desc = "Find files (cwd)" },
+    {
+      "<leader>fF",
+      open(picker, "files", function()
+        return { cwd = root.cwd() }
+      end),
+      desc = "Find files (cwd)",
+    },
     { "<leader>fg", open(picker, "git_files"), desc = "Find git files" },
     { "<leader>fr", open(picker, "oldfiles"), desc = "Recent files" },
     {
       "<leader>fR",
       open(picker, "oldfiles", function()
-        return { cwd = cwd() }
+        return { cwd = root.cwd() }
       end),
       desc = "Recent files (cwd)",
     },
@@ -125,10 +123,10 @@ function M.keys(picker)
     { "<leader>sd", open(picker, "diagnostics"), desc = "Diagnostics" },
     { "<leader>sD", open(picker, "diagnostics", { buffer = 0 }), desc = "Buffer diagnostics" },
     { "<leader>sg", open(picker, "grep", function()
-      return { cwd = root() }
+      return { cwd = root.get() }
     end), desc = "Grep (root)" },
     { "<leader>sG", open(picker, "grep", function()
-      return { cwd = cwd() }
+      return { cwd = root.cwd() }
     end), desc = "Grep (cwd)" },
     { "<leader>sh", open(picker, "help"), desc = "Help pages" },
     { "<leader>sH", open(picker, "highlights"), desc = "Highlight groups" },
@@ -143,21 +141,21 @@ function M.keys(picker)
     {
       "<leader>sw",
       open(picker, "grep_string", function()
-        return { cwd = root(), word = true }
+        return { cwd = root.get(), word = true }
       end),
       desc = "Word (root)",
     },
     {
       "<leader>sW",
       open(picker, "grep_string", function()
-        return { cwd = cwd(), word = true }
+        return { cwd = root.cwd(), word = true }
       end),
       desc = "Word (cwd)",
     },
     {
       "<leader>sw",
       open(picker, "grep_string", function()
-        return { cwd = root(), selection = true }
+        return { cwd = root.get(), selection = true }
       end),
       mode = "x",
       desc = "Selection (root)",
@@ -165,7 +163,7 @@ function M.keys(picker)
     {
       "<leader>sW",
       open(picker, "grep_string", function()
-        return { cwd = cwd(), selection = true }
+        return { cwd = root.cwd(), selection = true }
       end),
       mode = "x",
       desc = "Selection (cwd)",

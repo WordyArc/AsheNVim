@@ -1,15 +1,17 @@
 local M = {}
 
+local root = require("ashenvim.core.root")
+
 local function terminal_cwd()
   require("snacks").terminal()
 end
 
 local function terminal_root()
-  require("snacks").terminal(nil, { cwd = require("ashenvim.core.root").get() })
+  require("snacks").terminal(nil, { cwd = root.get() })
 end
 
 local function focus_terminal_root()
-  require("snacks").terminal.focus(nil, { cwd = require("ashenvim.core.root").get() })
+  require("snacks").terminal.focus(nil, { cwd = root.get() })
 end
 
 ---@return LazyPluginSpec
