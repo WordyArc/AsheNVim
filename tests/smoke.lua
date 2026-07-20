@@ -69,6 +69,7 @@ for _, spec in ipairs(specs) do
   end
 end
 assert(dashboard_spec and lazygit_spec and terminal_spec, "Snacks feature specs are missing")
+local diffview_spec = find_spec(specs, "sindrets/diffview.nvim")
 local gitsigns_spec = find_spec(specs, "lewis6991/gitsigns.nvim")
 local completion_spec = find_spec(specs, "saghen/blink.cmp")
 local formatting_spec = find_spec(specs, "stevearc/conform.nvim")
@@ -101,6 +102,8 @@ assert(type(terminal_spec.opts.terminal) == "table", "terminal setup is missing"
 assert(type(lazygit_spec.opts.lazygit) == "table", "lazygit setup is missing")
 local terminal_ctrl = find_key(terminal_spec, "<C-/>")
 assert(contains(terminal_ctrl.mode, "n") and contains(terminal_ctrl.mode, "t"), "terminal modes are incomplete")
+assert(contains(diffview_spec.cmd, "DiffviewOpen"), "diffview command trigger is missing")
+assert(type(find_key(diffview_spec, "<leader>gd")[2]) == "function", "diffview toggle keymap is missing")
 assert(contains(gitsigns_spec.event, "BufReadPre"), "gitsigns BufReadPre trigger is missing")
 assert(contains(gitsigns_spec.event, "BufNewFile"), "gitsigns BufNewFile trigger is missing")
 assert(type(gitsigns_spec.opts.on_attach) == "function", "gitsigns buffer mappings are missing")

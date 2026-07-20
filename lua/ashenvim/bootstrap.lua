@@ -10,6 +10,7 @@ function M.build()
   local specs = {
     require("ashenvim.plugins.colorscheme").spec(),
     require("ashenvim.plugins.dashboard").spec(),
+    require("ashenvim.plugins.diffview").spec(),
     require("ashenvim.plugins.formatting").spec(),
     require("ashenvim.plugins.gitsigns").spec(),
     require("ashenvim.plugins.lazygit").spec(),
