@@ -8,6 +8,7 @@ function M.spec()
     priority = 1000,
     opts = {
       variant = "auto",
+      cache = true,
     },
     config = function(_, opts)
       require("cyberdream").setup(opts)
