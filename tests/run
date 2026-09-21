@@ -1,0 +1,24 @@
+#!/bin/sh
+# Usage: tests/run              fast suites (tests/*.lua)
+#        tests/run all          fast suites plus tests/integration/*.lua
+#        tests/run tests/x.lua  the given spec files
+
+set -u
+
+config_dir=$(CDPATH= cd "$(dirname "$0")/.." && pwd)
+
+case "${1:-}" in
+  "") set -- "$config_dir"/tests/*.lua ;;
+  all) set -- "$config_dir"/tests/*.lua "$config_dir"/tests/integration/*.lua ;;
+esac
+
+status=0
+for spec in "$@"; do
+  printf '== %s\n' "${spec#"$config_dir"/}"
+  XDG_CONFIG_HOME="$(dirname "$config_dir")" \
+  NVIM_APPNAME="$(basename "$config_dir")" \
+    nvim -u "$config_dir/init.lua" -l "$config_dir/tests/lib/run.lua" "$spec" || status=1
+  echo
+done
+
+exit $status
