@@ -217,6 +217,14 @@ t.describe("git specs", function()
     h.eq(type(h.key(diffview, "<leader>gd")[2]), "function")
   end)
 
+  t.it("closes diffview with q from every main panel", function()
+    local keymaps = spec("sindrets/diffview.nvim").opts().keymaps
+    local close = { "n", "q", require("diffview.actions").close, { desc = "Close diff view" } }
+    for _, panel in ipairs({ "view", "file_panel", "file_history_panel" }) do
+      h.eq(keymaps[panel][1], close)
+    end
+  end)
+
   t.it("loads gitsigns on buffer read with buffer mappings", function()
     local gitsigns = spec("lewis6991/gitsigns.nvim")
     h.has(gitsigns.event, "BufReadPre")
