@@ -26,6 +26,8 @@ t.describe("keymaps", function()
     { "<Space>ff", "n", "picker" },
     { "<Space>e", "n", "explorer" },
     { "<Space>bd", "n", "buffer delete" },
+    { "<Space>bo", "n", "delete other buffers" },
+    { "<Space>ba", "n", "delete all buffers" },
     { "<Space>cs", "n", "outline" },
     { "<Space>cf", "n", "formatting" },
     { "<Space>ft", "n", "root terminal" },
@@ -106,7 +108,10 @@ t.describe("dashboard spec", function()
   t.it("loads eagerly with the highest priority", function()
     h.eq(dashboard.lazy, false)
     h.eq(dashboard.priority, 1000)
-    h.eq(dashboard.opts.dashboard.enabled, true)
+  end)
+
+  t.it("stays disabled while keeping its preset", function()
+    h.eq(dashboard.opts.dashboard.enabled, false)
     assert(dashboard.opts.dashboard.preset.header ~= "", "dashboard logo is missing")
   end)
 

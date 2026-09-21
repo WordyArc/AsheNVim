@@ -99,3 +99,46 @@ t.describe("buffer.delete_others", function()
     h.eq(notifications, { { message = "Kept 1 modified buffer(s)", level = vim.log.levels.WARN } })
   end)
 end)
+
+t.describe("buffer.delete_all", function()
+  t.before_each(h.wipe_buffers)
+
+  t.it("drops every listed buffer and leaves an empty one", function()
+    local first = file("first.txt")
+    local second = file("second.txt")
+
+    buffer.delete_all()
+
+    h.eq(vim.api.nvim_buf_is_valid(first), false)
+    h.eq(vim.api.nvim_buf_is_valid(second), false)
+    h.eq(vim.api.nvim_buf_get_name(0), "")
+  end)
+
+  t.it("keeps unlisted buffers and their windows", function()
+    file("first.txt")
+    local sidebar = vim.api.nvim_create_buf(false, true)
+    vim.cmd.vsplit()
+    t.cleanup(vim.cmd.only)
+    local sidebar_win = vim.api.nvim_get_current_win()
+    vim.api.nvim_win_set_buf(sidebar_win, sidebar)
+
+    buffer.delete_all()
+
+    h.eq(vim.api.nvim_buf_is_valid(sidebar), true)
+    h.eq(vim.api.nvim_win_get_buf(sidebar_win), sidebar)
+    h.eq(#vim.api.nvim_list_wins(), 2)
+  end)
+
+  t.it("keeps modified buffers and reports how many", function()
+    local dirty = file("dirty.txt")
+    modify(dirty)
+    local clean = file("clean.txt")
+    local notifications = h.notifications()
+
+    buffer.delete_all()
+
+    h.eq(vim.api.nvim_buf_is_valid(dirty), true)
+    h.eq(vim.api.nvim_buf_is_valid(clean), false)
+    h.eq(notifications, { { message = "Kept 1 modified buffer(s)", level = vim.log.levels.WARN } })
+  end)
+end)

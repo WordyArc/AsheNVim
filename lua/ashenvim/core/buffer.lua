@@ -49,16 +49,15 @@ function M.delete(buf, opts)
   return ok
 end
 
-function M.delete_others()
-  local current = vim.api.nvim_get_current_buf()
+local function delete_listed(keep)
   local skipped = 0
 
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    if buf ~= current and vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buflisted then
+    if buf ~= keep and vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buflisted then
       if vim.bo[buf].modified then
         skipped = skipped + 1
       else
-        vim.api.nvim_buf_delete(buf, {})
+        M.delete(buf)
       end
     end
   end
@@ -66,6 +65,14 @@ function M.delete_others()
   if skipped > 0 then
     vim.notify(("Kept %d modified buffer(s)"):format(skipped), vim.log.levels.WARN)
   end
+end
+
+function M.delete_others()
+  delete_listed(vim.api.nvim_get_current_buf())
+end
+
+function M.delete_all()
+  delete_listed(nil)
 end
 
 return M
