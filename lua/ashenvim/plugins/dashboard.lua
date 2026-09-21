@@ -17,7 +17,7 @@ function M.spec()
     priority = 1000,
     opts = {
       dashboard = {
-        enabled = true,
+        enabled = false,
         preset = {
           header = table.concat(logo, "\n"),
           keys = {
